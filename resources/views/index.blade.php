@@ -8,13 +8,13 @@
     <title>{{ config('app.name') }} - Logger</title>
     <link rel="stylesheet" href="/vendor/laravel-logger/style.css">
 </head>
-<body>
+<body class="flex items-center justify-center w-screen  h-screen overflow-y-auto flex-col">
 <script type="module">
     import LaravelLogger from '/vendor/laravel-logger/laravel-logger.js';
 
     const container = document.querySelector('body');
     const logger = new LaravelLogger;
-    logger.build(container)
+    logger.build(container, true, false)
 </script>
 </body>
 </html>

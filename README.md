@@ -1,6 +1,8 @@
 # Laravel Logger
 
-> This package is still in development.
+> ### This package is still in development.
+
+![Preview](preview.jpeg)
 
 ## Table Of Contents
 
@@ -26,11 +28,51 @@
 
 ## Installation
 
-If you don't want to use built-in log viewer, you don't need to do the following.
+```
+composer require zawlintun/laravel-logger
+```
 
-In order to use built-in log viewer, you need to publish public assets.
+### Publish config file
+
+```
+php artisan vendor:publish --tag=laravel-logger-config
+```
+
+### Publish migration ( Optional )
+
+If you set the log type to `model`, you need to publish the migration file.
+
+```
+php artisan vendor:publish --tag=laravel-logger-migrations
+```
+
+### Publish public assets and views ( Optional )
+
+> If you don't want to use built-in log viewer, you don't need to do the following. You may
+> customize [here](#customizing-log-viewer).
+
+In order to use built-in log viewer, you need to publish public assets and blade view file.
+
+```
+php artisan vendor:publish --tag=laravel-logger-assets && php artisan vendor:publish --tag=laravel-logger-views
+```
 
 ## How To
+
+**Middleware for logging responses of all web endpoints will be handled by the package automatically.**
+
+You may also use the `laravel-logger-log-response` middleware in where you want.
+For example,
+
+```php
+Route::middleware('laravel-logger-log-response')->get('/',function(){
+   // ....
+})
+```
+
+## Viewing Logs
+
+If you have published public assets and views, you can view the logs table by visiting `/laravel-logger`.
 
 ### Logging Additional Meta Data
 
@@ -47,6 +89,8 @@ public function boot(){
    });
 }
 ```
+
+## Customizing Log Viewer
 
 ### Customizing CSS styles
 

@@ -16,6 +16,9 @@ return [
     //if type is model, provided model will be used for storing logs.
     'model' => \Zawlintun\LaravelLogger\Models\Log::class,
 
+
+    'logTableName' => 'logs',
+
     // if type is file, provided channel configuration will be used.
     'channel' => [
         'driver' => 'daily',

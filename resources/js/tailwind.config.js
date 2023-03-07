@@ -2,7 +2,7 @@
 module.exports = {
     content: [
         './*.ts',
-        '../views/laravel-viewer.blade.php'
+        '../views/index.blade.php'
     ],
     theme: {
         extend: {},

@@ -13,24 +13,30 @@ class LaravelLoggerServiceProvider extends ServiceProvider
         // Config
         $this->publishes([
             __DIR__ . '/../config/laravel-logger.php' => config_path('laravel-logger.php'),
-        ], 'laravel-logger');
+        ], 'laravel-logger-config');
 
         // Migrations
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        foreach (glob(__DIR__ . '/../database/migrations/*.php') as $migration) {
+            $this->publishes([
+                $migration => database_path('migrations/' . basename($migration)),
+            ], 'laravel-logger-migrations');
+        }
 
         // JS and Css
         $this->publishes([
             __DIR__ . '/../public' => public_path('vendor/laravel-logger'),
-        ], 'laravel-logger-view');
+        ], 'laravel-logger-assets');
 
         // Views
         $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/laravel-logger'),
-        ], 'laravel-logger-view');
+        ], 'laravel-logger-views');
 
         /** @var Router $router */
         $router = app('router');
         $router->prependMiddlewareToGroup('web', LogResponse::class);
+
+        $router->aliasMiddleware('laravel-logger-log-response', LogResponse::class);
 
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
     }
