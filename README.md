@@ -1,5 +1,7 @@
 # Laravel Logger
 
+> This package is still in development.
+
 ## Table Of Contents
 
 - [Introduction](#introduction)
