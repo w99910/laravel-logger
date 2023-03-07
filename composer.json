@@ -1,0 +1,29 @@
+{
+    "name": "zawlintun/laravel-logger",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Zawlintun\\LaravelLogger\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Zaw Lin Tun",
+            "email": "zawlintun@utycc.edu.mm"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "illuminate/http": "^9.0",
+        "illuminate/routing": "^9.0",
+        "illuminate/support": "^9.0",
+        "illuminate/database": "^9.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Zawlintun\\LaravelLogger\\LaravelLoggerServiceProvider"
+            ]
+        }
+    }
+}
