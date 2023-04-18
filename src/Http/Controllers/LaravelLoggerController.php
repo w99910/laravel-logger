@@ -34,7 +34,7 @@ class LaravelLoggerController
             $startDate = $request->get('startDate');
             $endDate = $request->get('endDate');
             $offset = $request->get('offset', 0);
-            $limit = $request->get('limit', 10);
+            $limit = $request->get('limit');
             $sortByDesc = $request->get('sortByDesc', false);
             $logs = config('laravel-logger.type') === 'model' ?
                 Logger::loadFromDB($startDate, $endDate, $sortByDesc, $offset, $limit) :

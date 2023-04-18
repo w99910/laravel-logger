@@ -9,7 +9,7 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [Installation](#installation)
-- [How To](#how-to)
+- [How To Use](#how-to-use)
 - [License](#license)
 - [Contributing](#contributing)
 - [Support](#support)
@@ -57,7 +57,7 @@ In order to use built-in log viewer, you need to publish public assets and blade
 php artisan vendor:publish --tag=laravel-logger-assets && php artisan vendor:publish --tag=laravel-logger-views
 ```
 
-## How To
+## How To Use
 
 **Middleware for logging responses of all web endpoints will be handled by the package automatically.**
 

@@ -29,6 +29,9 @@ return [
     // Middleware for laravel-logger endpoints
     'middleware' => ['web', 'auth'],
 
+    // Exclude endpoints from logging
+    'excludeEndPoints' => ['horizon/*'],
+
     /*
      * specify which attributes to be returned in response of endpoint "/laravel-logger"
      *

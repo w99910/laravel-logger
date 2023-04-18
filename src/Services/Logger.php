@@ -53,14 +53,32 @@ class Logger
      */
     public static function logRequestResponse(Request $request, Response $response): void
     {
-        $instance = static::getInstance();
         $path = $request->decodedPath() === '/' ? '/' : "/" . $request->decodedPath();
+        // check if endpoint is excluded
+        $excludeEndPoints = config('laravel-logger.excludeEndPoints', []);
+        foreach ($excludeEndPoints as $excludeEndPoint) {
+            if (str_contains($excludeEndPoint, '*')) {
+                $excludeEndPoint = preg_quote($excludeEndPoint, '/');
+                $excludeEndPoint = str_replace('*', '.*', $excludeEndPoint);
+                if (preg_match("/$excludeEndPoint/", $path)) {
+                    return;
+                }
+            } else {
+                if ($excludeEndPoint === $request->decodedPath()) {
+                    return;
+                }
+            }
+        }
+
+        $instance = static::getInstance();
         $log = new Log(
             $path,
-            $request->route()->getAction()['controller'],
+            $request->route()->getAction()['controller'] ?? 'NA',
             $request->userAgent(),
             $request->ip(),
         );
+
+        $log->userId = $request->user()?->id ?? null;
 
         $log->meta = [
             'x-forwarded-for' => $request->header('x-forwarded-for'),
@@ -114,7 +132,7 @@ class Logger
     public static function catch(\Throwable $exception): void
     {
         $instance = static::getInstance();
-        $request = request();
+        $request = request() ?? null;
         $log = new Log(
             $exception->getFile(),
             $request?->route()?->getAction()['controller'] ?? '',
@@ -135,11 +153,11 @@ class Logger
      * @param Carbon|string $endDate
      * @param bool $sortByDesc
      * @param int $offset
-     * @param int $limit
+     * @param int|null $limit
      * @return array
      * @throws \Exception
      */
-    public static function loadFromDB(Carbon|string $startDate, Carbon|string $endDate, bool $sortByDesc = false, int $offset = 0, int $limit = 10): array
+    public static function loadFromDB(Carbon|string $startDate, Carbon|string $endDate, bool $sortByDesc = false, int $offset = 0, int $limit = null): array
     {
         $query = static::getModelQuery();
         if (is_string($startDate)) {
@@ -161,11 +179,11 @@ class Logger
      * @param Carbon|string $endDate
      * @param bool $sortByDesc
      * @param int $offset
-     * @param int $limit
+     * @param int|null $limit
      * @return array
      * @throws \Exception
      */
-    public static function loadFromFile(Carbon|string $startDate, Carbon|string $endDate, bool $sortByDesc = false, int $offset = 0, int $limit = 10): array
+    public static function loadFromFile(Carbon|string $startDate, Carbon|string $endDate, bool $sortByDesc = false, int $offset = 0, int $limit = null): array
     {
         if (is_string($startDate)) {
             $startDate = new Carbon($startDate);
@@ -196,7 +214,7 @@ class Logger
             }
             $data = explode(PHP_EOL, file_get_contents($filePath));
             foreach ($data as $entry) {
-                if (count($logs) >= $limit) {
+                if ($limit && count($logs) >= $limit) {
                     break;
                 }
                 preg_match('/\[(.*)]([^.]*).(\w+):(\s+)([^{]*)(.*)/', $entry, $matches);

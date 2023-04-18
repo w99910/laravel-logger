@@ -1,4 +1,5 @@
 import {scaleTime, extent, timeParse, scaleLinear, max, area, axisLeft, axisBottom, select} from 'd3';
+import {LineChart, StackedBarChart} from 'd3z'
 
 export default class LogTableBuilder {
 
@@ -13,7 +14,7 @@ export default class LogTableBuilder {
     protected currentPage: number = 1;
 
     constructor(protected container: HTMLElement) {
-        this.setupTable();
+
     }
 
     setPaginatedCount(count: number) {
@@ -38,11 +39,12 @@ export default class LogTableBuilder {
         return this.data.slice(startIndex, endIndex);
     }
 
-    protected setupTable() {
+    setupTable() {
         this.table = document.createElement('table');
         this.table.classList.add('border', 'border-solid', 'rounded-md',)
         this.table.style.borderCollapse = 'separate';
         this.container.appendChild(this.table)
+        return this;
     }
 
     buildHeaders() {
@@ -86,79 +88,6 @@ export default class LogTableBuilder {
         this.container.prepend(filterBox);
 
         return this;
-    }
-
-    buildChart() {
-        const infoLogData = [];
-        const errorLogData = [];
-        for (let datum of this.data) {
-            let date = (new Date(datum.date)).toUTCString();
-            if (datum.statusCode && datum.statusCode >= 200 && datum.statusCode < 300) {
-                let entries = infoLogData.filter((entry) => entry.index === date);
-                // @ts-ignore
-                entries.length > 0 ? entries[0].count += 1 : infoLogData.push({
-                    index: date,
-                    date: new Date(date),
-                    count: 1
-                });
-            } else {
-                let entries = errorLogData.filter((entry) => entry.index === date);
-                // @ts-ignore
-                entries.length > 0 ? entries[0].count += 1 : errorLogData.push({
-                    index: date,
-                    date: new Date(date),
-                    count: 1
-                });
-            }
-        }
-        // define properties
-        const width = 800;
-        const height = 400;
-        // // create svg
-        const container = document.createElement('div');
-        this.container.appendChild(container)
-        const svg = select(container)
-            .append('svg')
-            .attr('width', width)
-            .attr('height', height)
-            .append('g');
-        const populateData = (data, fillColor, strokeColor) => {
-            const x = scaleTime()
-                .domain(extent(data, function ({date}) {
-                    return date;
-                }))
-                .range([0, width]);
-            svg.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(axisBottom(x));
-
-            const y = scaleLinear()
-                .domain([0, max(data, function ({count}) {
-                    return +count;
-                })])
-                .range([height, 0]);
-            svg.append("g")
-                .call(axisLeft(y));
-            svg.append("path")
-                .datum(data)
-                .attr("fill", fillColor)
-                .attr("stroke", strokeColor)
-                .attr("stroke-width", 1.5)
-                .attr("d", area()
-                    .x(function (d) {
-                        // @ts-ignore
-                        return x(d.date)
-                    })
-                    .y0(y(0))
-                    .y1(function (d) {
-                        // @ts-ignore
-                        return y(d.count)
-                    })
-                )
-        }
-
-        populateData(infoLogData, '#cce5df', '#69b3a2');
-        // populateData(errorLogData, '#ff5d5d', '#69b3a2');
     }
 
     buildBody() {
