@@ -74,8 +74,8 @@ class Logger
         $log = new Log(
             $path,
             $request->route()->getAction()['controller'] ?? 'NA',
-            $request->userAgent(),
-            $request->ip(),
+            $request->userAgent() ?? 'NA',
+            $request->ip() ?? 'NA',
         );
 
         $log->userId = $request->user()?->id ?? null;
